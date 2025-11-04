@@ -1,5 +1,29 @@
-﻿using ScreenSound.Menus;
+﻿using ScreenSound.BD;
+using ScreenSound.Menus;
 using ScreenSound.Modelos;
+
+try
+{
+    //var conexao = new Conexao();
+    //using var cn = conexao.ObterConexao();
+    //cn.Open();
+    //Console.WriteLine(cn.State);
+    var artistaDAL = new ArtistaDAL();
+
+    //artistaDAL.Adicionar(new Artista("Foo Fighters", "Foo Fighters é uma banda de rock alternativo americana formada por Dave Grohl em 1995."));
+    
+    //artistaDAL.Atualizar(new Artista("Rita Lee Jones", "Rita Lee foi a rainha do rock brasileiro. Da era Mutantes à brilhante carreira solo, sua música irreverente e espírito libertário marcaram gerações. Ícone atemporal da cultura nacional.") { Id = 5});
+
+    var listaArtistas =  artistaDAL.Listar();
+    foreach (var artista in listaArtistas)
+    {
+        Console.WriteLine(artista.Nome);
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
 
 Artista ira = new Artista("Ira!", "Banda Ira!");
 Artista beatles = new("The Beatles", "Banda The Beatles");
