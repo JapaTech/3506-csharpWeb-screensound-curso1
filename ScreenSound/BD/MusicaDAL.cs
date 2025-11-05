@@ -7,46 +7,46 @@ using ScreenSound.Modelos;
 
 namespace ScreenSound.BD
 {
-    internal class MusicaDAL
+    internal class MusicaDAL : DAL<Musica>
     {
         private readonly ScreenSoundContext _context;
 
-        public MusicaDAL(ScreenSoundContext context)
+        public MusicaDAL(ScreenSoundContext context) : base(context)
         {
-            _context = context;
+            //_context = context;
         }
 
-        public IEnumerable<Musica> Listar()
-        {
-            return _context.Musicas.ToList();
-        }
+        //public override IEnumerable<Musica> Listar()
+        //{
+        //    return _context.Musicas.ToList();
+        //}
 
-        public void Adicionar(Musica musica)
-        {
-            _context.Musicas.Add(musica);
-            _context.SaveChanges();
-        }
+        //public override void Adicionar(Musica musica)
+        //{
+        //    _context.Musicas.Add(musica);
+        //    _context.SaveChanges();
+        //}
 
-        public void Deletar(int id)
-        {
-            var musica = _context.Musicas.Find(id);
-            if (musica != null)
-            {
-                _context.Musicas.Remove(musica);
-                _context.SaveChanges();
-            }
-        }
+        //public override void Deletar(int id)
+        //{
+        //    var musica = _context.Musicas.Find(id);
+        //    if (musica != null)
+        //    {
+        //        _context.Musicas.Remove(musica);
+        //        _context.SaveChanges();
+        //    }
+        //}
 
-        public void Deletar(Musica musica)
-        {
-            _context.Musicas.Remove(musica);    
-        }
+        //public override void Deletar(Musica musica)
+        //{
+        //    _context.Musicas.Remove(musica);    
+        //}
 
-        public void Atualizar(Musica musica)
-        {
-            _context.Musicas.Update(musica);
-            _context.SaveChanges();
-        }
+        //public override void Atualizar(Musica musica)
+        //{
+        //    _context.Musicas.Update(musica);
+        //    _context.SaveChanges();
+        //}
 
         public List<Musica> BuscarPorNome(string nome)
         {
