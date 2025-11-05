@@ -103,7 +103,12 @@ namespace ScreenSound.BD
 
         public void Deletar(int id)
         {
-            context.Artistas.Remove(context.Artistas.Find(id));
+            Artista artista = context.Artistas.Find(id);
+
+            if (artista != null)
+            {
+                context.Artistas.Remove(context.Artistas.Find(id));
+            }
             /*int retorno =*/ context.SaveChanges();
             //Console.WriteLine($"Linhas afetadas: {retorno}");
         }
@@ -139,7 +144,7 @@ namespace ScreenSound.BD
 
         public Artista BuscarPorNomeExato(string nome)
         {
-            return context.Artistas.FirstOrDefault(a => a.Nome.Equals(nome));
+            return context.Artistas.FirstOrDefault(a => a.Nome.ToLower() == nome.ToLower());
         }
 
     }

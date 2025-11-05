@@ -45,6 +45,14 @@ artistasRegistrados.Add(beatles.Nome, beatles);
 
 var context = new ScreenSoundContext();
 ArtistaDAL artistaDAL = new ArtistaDAL(context);
+MusicaDAL musicaDAL = new MusicaDAL(context);
+
+//musicaDAL.Adicionar(new Musica("Se..."));
+foreach (var item in musicaDAL.Listar())
+{
+    Console.WriteLine(item.Nome);
+}
+
 
 Dictionary<int, Menu> opcoes = new();
 opcoes.Add(1, new MenuRegistrarArtista());
