@@ -2,6 +2,7 @@
 using ScreenSound.Menus;
 using ScreenSound.Modelos;
 
+/* testes
 try
 {
     //var conexao = new Conexao();
@@ -10,14 +11,22 @@ try
     //Console.WriteLine(cn.State);
     var artistaDAL = new ArtistaDAL();
 
-    //artistaDAL.Adicionar(new Artista("Foo Fighters", "Foo Fighters é uma banda de rock alternativo americana formada por Dave Grohl em 1995."));
+    //artistaDAL.Adicionar(new Artista("Rita Lee", "Rita Lee foi a rainha do rock brasileiro. Da era Mutantes à brilhante carreira solo, sua música irreverente e espírito libertário marcaram gerações. Ícone atemporal da cultura nacional."));
     
-    //artistaDAL.Atualizar(new Artista("Rita Lee Jones", "Rita Lee foi a rainha do rock brasileiro. Da era Mutantes à brilhante carreira solo, sua música irreverente e espírito libertário marcaram gerações. Ícone atemporal da cultura nacional.") { Id = 5});
+    //artistaDAL.Deletar(4);
 
     var listaArtistas =  artistaDAL.Listar();
     foreach (var artista in listaArtistas)
     {
         Console.WriteLine(artista.Nome);
+    }
+
+    Console.WriteLine();
+    var artistasEncontrados = artistaDAL.BuscarPorNome("Rita");
+    Console.WriteLine("Artistas com Rita");
+    foreach (var item in artistasEncontrados)
+    {
+        Console.WriteLine(item.Nome);
     }
 }
 catch (Exception ex)
@@ -25,12 +34,17 @@ catch (Exception ex)
     Console.WriteLine(ex.Message);
 }
 
+
 Artista ira = new Artista("Ira!", "Banda Ira!");
 Artista beatles = new("The Beatles", "Banda The Beatles");
 
 Dictionary<string, Artista> artistasRegistrados = new();
 artistasRegistrados.Add(ira.Nome, ira);
 artistasRegistrados.Add(beatles.Nome, beatles);
+*/
+
+var context = new ScreenSoundContext();
+ArtistaDAL artistaDAL = new ArtistaDAL(context);
 
 Dictionary<int, Menu> opcoes = new();
 opcoes.Add(1, new MenuRegistrarArtista());
@@ -69,7 +83,7 @@ void ExibirOpcoesDoMenu()
     if (opcoes.ContainsKey(opcaoEscolhidaNumerica))
     {
         Menu menuASerExibido = opcoes[opcaoEscolhidaNumerica];
-        menuASerExibido.Executar(artistasRegistrados);
+        menuASerExibido.Executar(artistaDAL);
         if (opcaoEscolhidaNumerica > 0) ExibirOpcoesDoMenu();
     } 
     else

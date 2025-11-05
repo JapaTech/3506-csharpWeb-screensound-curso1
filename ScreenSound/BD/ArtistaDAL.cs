@@ -5,11 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using ScreenSound.Modelos;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 
 namespace ScreenSound.BD
 {
     internal class ArtistaDAL
     {
+        private readonly ScreenSoundContext context;
+
+        public ArtistaDAL(ScreenSoundContext _context)
+        {
+            this.context = _context;
+        }
+
+
+        /* Listar com SQL Command
         public IEnumerable<Artista> Listar()
         {
             var lista = new List<Artista>();
@@ -31,7 +41,14 @@ namespace ScreenSound.BD
 
             return lista;
         }
+        */
 
+        public IEnumerable<Artista> Listar()
+        {   
+            return context.Artistas.ToList();
+        }
+
+        /* Adicionar com SQL Command
         public void Adicionar(Artista artista)
         {
             using var cn = new ScreenSoundContext().ObterConexao();
@@ -45,7 +62,16 @@ namespace ScreenSound.BD
             Console.WriteLine($"Linhas afetadas: {retorno}");
             
         }
+        */
 
+        public void Adicionar (Artista artista)
+        {            
+            context.Artistas.Add(artista);
+            int retorno = context.SaveChanges();
+            Console.WriteLine($"Linhas afetadas: {retorno}");
+        }
+
+        /* Deletar com SQL Command
         public void Deletar(int id)
         {
             using var cn = new ScreenSoundContext().ObterConexao();
@@ -56,7 +82,6 @@ namespace ScreenSound.BD
             int retorno = cmd.ExecuteNonQuery();
             Console.WriteLine($"Linhas afetadas: {retorno}");
         }
-
         public void Deletar(Artista artista)
         {
             using var cn = new ScreenSoundContext().ObterConexao();
@@ -67,7 +92,23 @@ namespace ScreenSound.BD
             int retorno = cmd.ExecuteNonQuery();
             Console.WriteLine($"Linhas afetadas: {retorno}");
         }
+        */
 
+        public void Deletar (Artista artista)
+        {
+            context.Artistas.Remove(artista);
+            /*int retorno =*/ context.SaveChanges();
+            //Console.WriteLine($"Linhas afetadas: {retorno}");
+        }
+
+        public void Deletar(int id)
+        {
+            context.Artistas.Remove(context.Artistas.Find(id));
+            /*int retorno =*/ context.SaveChanges();
+            //Console.WriteLine($"Linhas afetadas: {retorno}");
+        }
+
+        /*Atualizar com SQL Command
         public void Atualizar(Artista artista)
         {
             using var cn = new ScreenSoundContext().ObterConexao();
@@ -81,5 +122,25 @@ namespace ScreenSound.BD
             int retorno = cmd.ExecuteNonQuery();
             Console.WriteLine($"Linhas afetadas: {retorno}");
         }
+        */
+        public void Atualizar(Artista artista)
+        {
+            context.Artistas.Update(artista);
+            /*int retorno =*/
+            context.SaveChanges();
+            //Console.WriteLine($"Linhas afetadas: {retorno}");
+        }
+
+        public List<Artista> BuscarPorNome(string nome)
+        {
+            List<Artista> artistasEncontrados = context.Artistas.Where(a => a.Nome.Contains(nome)).ToList();
+            return artistasEncontrados;
+        }
+
+        public Artista BuscarPorNomeExato(string nome)
+        {
+            return context.Artistas.FirstOrDefault(a => a.Nome.Equals(nome));
+        }
+
     }
 }

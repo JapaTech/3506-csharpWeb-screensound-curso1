@@ -12,6 +12,13 @@ namespace ScreenSound.BD
     internal class ScreenSoundContext : DbContext   
     {
         string connectionString = "Data Source=DESKTOP-5A72BGU\\SQLEXPRESS;Initial Catalog= ScreenSound;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        
+        public DbSet<Artista> Artistas { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(connectionString);
+        }
 
         public SqlConnection ObterConexao()
         {
