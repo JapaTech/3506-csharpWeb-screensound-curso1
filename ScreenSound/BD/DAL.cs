@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ScreenSound.BD
 {
-    internal abstract class DAL <T> where T : class
+    internal class DAL <T> where T : class
     {
         protected readonly ScreenSoundContext context;
 

@@ -9,7 +9,7 @@ internal class Musica
 
     public string Nome { get; set; }
     public int Id { get; set; }
-
+    public DateTime AnoLancamento { get; set; }
     public void ExibirFichaTecnica()
     {
         Console.WriteLine($"Nome: {Nome}");
