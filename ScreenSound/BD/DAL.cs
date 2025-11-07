@@ -20,11 +20,16 @@ namespace ScreenSound.BD
         {
             return context.Set<T>().ToList();
         }
+
+        public IEnumerable<T> ListarPorOrdem(Func<T, object> func)
+        {
+            return context.Set<T>().OrderBy(func).ToList();
+        }
+
         public void Adicionar(T objeto)
         {          
             context.Set<T>().Add(objeto);
-            context.SaveChanges();
-        
+            context.SaveChanges();        
         }
         public void Atualizar(T objeto)
         {
