@@ -4,8 +4,7 @@ internal class Musica
 {
     public Musica(string nome)
     {
-        Nome = nome;
-        
+        Nome = nome;        
     }
 
     public Musica(string nome, int anoLancamento)
@@ -14,6 +13,8 @@ internal class Musica
         AnoLancamento = anoLancamento;
     }
 
+
+    public Artista? Artista { get; set; }
     public string Nome { get; set; }
     public int Id { get; set; }
     public int AnoLancamento { get; set; }
