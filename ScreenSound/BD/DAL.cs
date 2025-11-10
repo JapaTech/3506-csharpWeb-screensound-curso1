@@ -52,13 +52,10 @@ namespace ScreenSound.BD
             }
             context.SaveChanges();
         }
-
-        public List<T> BuscarPorStringAbrangente(string termoDeBusca, Func<T, string> condicao)
+    
+        public IEnumerable<T> BuscarPor(Func<T, bool> condicao)
         {
-            List<T> lista = context.Set<T>()
-                .Where(e => condicao(e).ToLower()
-                .Contains(termoDeBusca)).ToList();
-            return lista;
+           return context.Set<T>().Where(condicao);
         }
 
         public T? BuscarObjetoExato(Func<T, bool> condicao)

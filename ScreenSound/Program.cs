@@ -48,10 +48,10 @@ DAL<Artista> artistaDAL = new DAL<Artista>(context);
 DAL<Musica> musicaDAL = new DAL<Musica>(context);
 
 //musicaDAL.Adicionar(new Musica("Se..."));
-foreach (var item in musicaDAL.Listar())
-{
-    Console.WriteLine(item.Nome);
-}
+//foreach (var item in musicaDAL.Listar())
+//{
+//    Console.WriteLine(item.Nome);
+//}
 
 
 Dictionary<int, Menu> opcoes = new();
@@ -59,6 +59,8 @@ opcoes.Add(1, new MenuRegistrarArtista());
 opcoes.Add(2, new MenuRegistrarMusica());
 opcoes.Add(3, new MenuMostrarArtistas());
 opcoes.Add(4, new MenuMostrarMusicas());
+opcoes.Add(5, new MenuMostrarMusicasPorAno());
+//opcoes.Add(6, new MenuListarMusicaPorAno());
 opcoes.Add(-1, new MenuSair());
 
 void ExibirLogo()
@@ -82,6 +84,8 @@ void ExibirOpcoesDoMenu()
     Console.WriteLine("Digite 2 para registrar a música de um artista");
     Console.WriteLine("Digite 3 para mostrar todos os artistas");
     Console.WriteLine("Digite 4 para exibir todas as músicas de um artista");
+    Console.WriteLine("Digite 5 para mostrar músicas de um ano de lançamento");
+    //Console.WriteLine("Digite 5 para mostrar todas as músicas por ordem de lançamento");
     Console.WriteLine("Digite -1 para sair");
 
     Console.Write("\nDigite a sua opção: ");
