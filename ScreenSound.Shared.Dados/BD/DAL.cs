@@ -1,4 +1,5 @@
-﻿using ScreenSound.Modelos;
+﻿using Microsoft.EntityFrameworkCore;
+using ScreenSound.Modelos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace ScreenSound.BD
 
         public T? BuscarObjetoExato(Func<T, bool> condicao)
         {
-            return context.Set<T>().FirstOrDefault(condicao);
+            return context.Set<T>().AsNoTracking().FirstOrDefault(condicao);
         }
     }
 }
