@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ScreenSound.API.Requests;
+using ScreenSound.API.Response;
 using ScreenSound.BD;
 using ScreenSound.Modelos;
 
@@ -23,8 +25,9 @@ namespace ScreenSound.API.Endpoints
                 return Results.Ok(musica);
             });
 
-            app.MapPost("/Musicas", ([FromServices] DAL<Musica> dal, [FromBody] Musica musica) =>
+            app.MapPost("/Musicas", ([FromServices] DAL<Musica> dal, [FromBody] MusicaGetRequest musicaReq) =>
             {
+                var musica = new Musica(musicaReq.nome, musicaReq.anoLancamento);
                 dal.Adicionar(musica);
                 return Results.Created($"/Musicas/{musica.Id}", musica);
             });
@@ -37,17 +40,27 @@ namespace ScreenSound.API.Endpoints
                 return Results.NoContent();
             });
 
-            app.MapPut("/Musicas/", ([FromServices] DAL<Musica> dal, Musica musica) =>
+            app.MapPut("/Musicas/", ([FromServices] DAL<Musica> dal, MusicaEditRequest musica) =>
             {
-                var musicaParaAtualizar = dal.BuscarObjetoExato(m => m.Id == musica.Id);
+                var musicaParaAtualizar = dal.BuscarObjetoExato(m => m.Id == musica.id);
                 if (musicaParaAtualizar == null)
                     return Results.NotFound();
 
-                musicaParaAtualizar.Nome = musica.Nome;
-                musicaParaAtualizar.Artista = musica.Artista;
+                musicaParaAtualizar.Nome = musica.nome;
+                musicaParaAtualizar.AnoLancamento = musica.anoLancamento;                
                 dal.Atualizar(musicaParaAtualizar);
                 return Results.Ok();
             });
+        }
+
+        private static ICollection<MusicaResponse> EntidadeParaListaResposta(IEnumerable<Musica> lista)
+        {
+            return lista.Select(a => EntidadeParaResposta(a)).ToList();
+        }
+
+        private static MusicaResponse EntidadeParaResposta(Musica musica)
+        {
+            return new MusicaResponse(musica.Id, musica.Nome, musica.AnoLancamento, musica.Artista.Id, musica.Artista.Nome);
         }
     }
 }

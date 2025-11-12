@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ScreenSound.API.Requests;
+using ScreenSound.API.Response;
 using ScreenSound.BD;
 using ScreenSound.Modelos;
+using System.Collections;
 
 namespace ScreenSound.API.Endpoints
 {
@@ -10,7 +13,7 @@ namespace ScreenSound.API.Endpoints
         {
             app.MapGet("/Artistas", ([FromServices] DAL<Artista> dal) =>
             {
-                return Results.Ok(dal.Listar());
+                return Results.Ok(ArtistaResponseToList(dal.Listar()));
             });
 
             app.MapGet("/Artistas/{nome}", ([FromServices] DAL<Artista> dal, string nome) =>
@@ -45,11 +48,13 @@ namespace ScreenSound.API.Endpoints
                 //    return Results.Ok(artista.ToString()); // Fallback
                 //}
                 */
-                return Results.Ok(artista.ToString());
+                return Results.Ok(EntidadeParaResposta(artista));
             });
 
-            app.MapPost("/Artistas", ([FromServices] DAL<Artista> dal, [FromBody] Artista artista) =>
+            app.MapPost("/Artistas", ([FromServices] DAL<Artista> dal, [FromBody] ArtistaGetRequest artistaRequest) =>
             {
+                var artista = new Artista
+                (artistaRequest.nome, artistaRequest.bio);
                 dal.Adicionar(artista);
                 return Results.Created($"/Artistas/{artista.Id}", artista);
             });
@@ -63,19 +68,29 @@ namespace ScreenSound.API.Endpoints
                 return Results.NoContent();
             });
 
-            app.MapPut("/Artistas", ([FromServices] DAL<Artista> dal, [FromBody] Artista artista) =>
+            app.MapPut("/Artistas", ([FromServices] DAL<Artista> dal, [FromBody] ArtistaEditRequest artista) =>
             {
-                var artistaParaAtualizar = dal.BuscarObjetoExato(a => a.Id == artista.Id);
+                var artistaParaAtualizar = dal.BuscarObjetoExato(a => a.Id == artista.id);
                 if (artistaParaAtualizar == null)
                     return Results.NotFound();
 
-                artistaParaAtualizar.Nome = artista.Nome;
-                artistaParaAtualizar.Bio = artista.Bio;
-                artistaParaAtualizar.FotoPerfil = artista.FotoPerfil;
+                artistaParaAtualizar.Nome = artista.nome;
+                artistaParaAtualizar.Bio = artista.bio;
+                artistaParaAtualizar.FotoPerfil = artista.fotoPerfil;
 
                 dal.Atualizar(artistaParaAtualizar);
                 return Results.Ok();
             });
+        }
+
+        private static ICollection<ArtistaResponse> ArtistaResponseToList(IEnumerable<Artista> lista)
+        {
+            return lista.Select(a => EntidadeParaResposta(a)).ToList();
+        }
+
+        private static ArtistaResponse EntidadeParaResposta(Artista artista)
+        {
+            return new ArtistaResponse(artista.Id, artista.Nome, artista.Bio, artista.FotoPerfil);  
         }
     }
 }
