@@ -61,7 +61,7 @@ namespace ScreenSound.BD
 
         public T? BuscarObjetoExato(Func<T, bool> condicao)
         {
-            return context.Set<T>().AsNoTracking().FirstOrDefault(condicao);
+            return context.Set<T>().FirstOrDefault(condicao);
         }
     }
 }
