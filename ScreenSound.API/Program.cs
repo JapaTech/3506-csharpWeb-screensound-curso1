@@ -29,4 +29,6 @@ var app = builder.Build();
 app.AddEndPointsArtistas();
 app.AddEndPointsMusica();
 
+app.UseSwagger();
+app.UseSwaggerUI();
 app.Run();
