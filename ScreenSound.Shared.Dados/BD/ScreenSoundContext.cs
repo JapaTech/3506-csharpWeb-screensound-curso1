@@ -23,6 +23,13 @@ namespace ScreenSound.BD
             optionsBuilder.UseSqlServer(connectionString);
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Musica>()
+                .HasMany(m => m.Generos)
+                .WithMany(g => g.Musicas);
+        }
+
         public SqlConnection ObterConexao()
         {
             return new SqlConnection(connectionString);
