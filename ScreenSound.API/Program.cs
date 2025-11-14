@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using ScreenSound.API.Endpoints;
+﻿using ScreenSound.API.Endpoints;
 using ScreenSound.BD;
 using ScreenSound.Modelos;
-using System.Security.Cryptography.Xml;
-using System.Text.Json;
+using ScreenSound.Shared.Modelos.Modelos;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ScreenSoundContext>();
 builder.Services.AddTransient<DAL<Artista>>();
 builder.Services.AddTransient<DAL<Musica>>();
+builder.Services.AddTransient<DAL<Genero>>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -28,6 +25,7 @@ var app = builder.Build();
 
 app.AddEndPointsArtistas();
 app.AddEndPointsMusica();
+app.AddEndPoitsGeneros();
 
 app.UseSwagger();
 app.UseSwaggerUI();

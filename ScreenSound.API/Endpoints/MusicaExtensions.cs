@@ -3,6 +3,7 @@ using ScreenSound.API.Requests;
 using ScreenSound.API.Response;
 using ScreenSound.BD;
 using ScreenSound.Modelos;
+using ScreenSound.Shared.Modelos.Modelos;
 
 namespace ScreenSound.API.Endpoints
 {
@@ -25,9 +26,15 @@ namespace ScreenSound.API.Endpoints
                 return Results.Ok(musica);
             });
 
-            app.MapPost("/Musicas", ([FromServices] DAL<Musica> dal, [FromBody] MusicaGetRequest musicaReq) =>
-            {
-                var musica = new Musica(musicaReq.nome, musicaReq.anoLancamento);
+            app.MapPost("/Musicas", ([FromServices] DAL<Musica> dal,
+                [FromServices] DAL <Genero> dalGenero,
+                [FromBody] MusicaGetRequest musicaReq) =>
+            {      
+                var musica = new Musica(
+                    musicaReq.nome, 
+                    musicaReq.anoLancamento,
+                    GeneroRequestParaEntidade(musicaReq.Generos, dalGenero) ?? new List<Genero>()
+                    );
                 dal.Adicionar(musica);
                 return Results.Created($"/Musicas/{musica.Id}", musica);
             });
@@ -53,6 +60,28 @@ namespace ScreenSound.API.Endpoints
             });
         }
 
+        private static ICollection<Genero> GeneroRequestParaEntidade(ICollection<GeneroGetRequest> lista,
+            DAL<Genero> dal)
+        {
+            var listaDeGeneros = new List<Genero>();
+            
+            foreach (var generoReq in lista)
+            {
+                var generoExistente = dal.BuscarObjetoExato(g => g.Nome.ToUpper() == generoReq.nome.ToUpper());
+                if (generoExistente != null)
+                {
+                    listaDeGeneros.Add(generoExistente);
+                }
+                else
+                {
+                    var novoGenero = new Genero(generoReq.nome, generoReq.descricao);
+                    dal.Adicionar(novoGenero);
+                    listaDeGeneros.Add(novoGenero);
+                }
+            }
+            return listaDeGeneros;
+        }
+
         private static ICollection<MusicaResponse> EntidadeParaListaResposta(IEnumerable<Musica> lista)
         {
             return lista.Select(a => EntidadeParaResposta(a)).ToList();
@@ -60,7 +89,11 @@ namespace ScreenSound.API.Endpoints
 
         private static MusicaResponse EntidadeParaResposta(Musica musica)
         {
-            return new MusicaResponse(musica.Id, musica.Nome, musica.AnoLancamento, musica.Artista.Id, musica.Artista.Nome);
+            return new MusicaResponse(musica.Id, 
+                musica.Nome, 
+                musica.AnoLancamento,
+                musica.Artista.Id, 
+                musica.Artista.Nome);
         }
     }
 }

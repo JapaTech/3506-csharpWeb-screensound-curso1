@@ -20,6 +20,12 @@ public class Musica
         AnoLancamento = anoLancamento;
     }
 
+    public Musica(string nome, int anoLancamento, ICollection<Genero> generos)
+    {
+        Nome = nome;
+        AnoLancamento = anoLancamento;
+        Generos = generos;
+    }
 
     public virtual Artista? Artista { get; set; }
     public string Nome { get; set; }
@@ -28,8 +34,7 @@ public class Musica
     public virtual ICollection<Genero> Generos { get; set; }
     public void ExibirFichaTecnica()
     {
-        Console.WriteLine($"Nome: {Nome}");
-      
+        Console.WriteLine($"Nome: {Nome}");    
     }
 
     public override string ToString()

@@ -1,4 +1,7 @@
-﻿namespace ScreenSound.API.Requests
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ScreenSound.API.Requests
 {
-    public record MusicaGetRequest (string nome, int anoLancamento, int artistaId);
+    public record MusicaGetRequest ([Required]string nome, int anoLancamento, int artistaId,
+        ICollection<GeneroGetRequest> Generos = null);
 }
