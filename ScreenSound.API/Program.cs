@@ -21,7 +21,20 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(option =>
     option.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:7114");
+                      });
+});
+
+
 var app = builder.Build();
+
 
 app.AddEndPointsArtistas();
 app.AddEndPointsMusica();
@@ -29,4 +42,5 @@ app.AddEndPoitsGeneros();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors(MyAllowSpecificOrigins);
 app.Run();
