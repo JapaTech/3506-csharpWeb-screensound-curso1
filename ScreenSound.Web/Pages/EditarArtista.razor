@@ -1,6 +1,74 @@
-﻿@page "/Artista/Editar/{id:int}"
-<h3>EditarArtista</h3>
+﻿@page "/EditarArtista/{NomeArtista}"
+@inject NavigationManager NavigationManager
+@inject ArtistaAPI artistaAPI
+
+<MudPaper Class="px-8 pt-2 pb-4 mx-12 my-8" Justify="Justify.Center">
+
+    <MudText Class="mt-8" Typo="Typo.h4">Cadastro do Artista</MudText>
+
+    <MudForm>
+        <MudTextField Class="mt-4" T="string" Placeholder="Nome do Artista"
+                      Variant="Variant.Outlined"
+                      @bind-Value="nomeArtista"
+                      Required="true"
+                      RequiredError="Campo obrigatório." />
+
+        <MudTextField Class="mt-4" T="string" Placeholder="Biografia do artista"
+                      Variant="Variant.Outlined"
+                      @bind-Value="biografiaArtista"
+                      Lines="4"
+                      Required="true"
+                      RequiredError="Campo obrigatório." />
+
+        <div class="d-flex align-center justify-space-between mt-4">
+            <MudButton Variant="Variant.Filled"
+                       @onclick="Atualizar"
+                       Color="Color.Success"
+                       Class="ml-auto">
+                Atualizar
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       @onclick="Deletar"
+                       Color="Color.Primary"
+                       Class="ml-auto">
+                Deletar
+            </MudButton>
+        </div>
+    </MudForm>
+</MudPaper>
+
 
 @code {
+    private string? nomeArtista;
+    private string? biografiaArtista;
 
+    [Parameter]
+    public string? NomeArtista { get; set; }
+
+    public ArtistaResponse? Artista { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Artista = await artistaAPI.GetArtistaPorNomeAsync(NomeArtista!);
+        nomeArtista = Artista!.nome;
+        biografiaArtista = Artista!.bio;    
+    }
+
+    private async Task Atualizar()
+    {
+        
+        await artistaAPI.AtualizarArtistaAsync(new ArtistaEditRequest(
+            Artista!.id!,
+            nomeArtista!,
+            biografiaArtista!,
+            "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
+        ));
+        NavigationManager.NavigateTo("/Artistas");
+    }
+
+    private async Task Deletar()
+    {       
+        await artistaAPI.DeletarArtistaAsync(Artista.id!);
+        NavigationManager.NavigateTo("/Artistas");
+    }
 }
