@@ -1,4 +1,4 @@
 ﻿namespace ScreenSound.Web.Requests
 {
-    public record ArtistaGetRequest (string nome, string bio, string fotoPefil);      
+    public record ArtistaGetRequest (string nome, string bio, string? fotoPefil);      
 }

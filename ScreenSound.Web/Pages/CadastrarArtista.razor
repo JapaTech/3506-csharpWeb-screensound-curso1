@@ -20,6 +20,19 @@
                       Required="true"
                       RequiredError="Campo obrigatório." />
 
+        <MudImage Class="mt-4" src="@fileImage" />
+        <MudFileUpload T="IBrowserFile" Accept=".jpeg" FilesChanged="UploadFile">
+            <ButtonTemplate>
+                <MudButton HtmlTag="label"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.PhotoCamera"
+                           for="@context">
+                    Foto de Perfil
+                </MudButton>
+            </ButtonTemplate>
+        </MudFileUpload>
+
         <div class="d-flex align-center justify-space-between mt-4">
             <MudButton Variant="Variant.Filled"
                        @onclick="Cadastrar"
@@ -40,10 +53,37 @@
     private string? nomeArtista;
     private string? biografiaArtista;
 
+    private string? fileImage;
+    private string? fotoPerfil;
+
+    public string? Imagem { get; set; }
+
+    // protected override void OnInitialized()
+    // {
+    //     Imagem = Artista!.FotoPerfil!.Contains("Foto") ? $"https://localhost:7089/{Artista!.FotoPerfil}" : "images/cardArtista.png";
+
+    // }
+
+    private async Task UploadFile(IBrowserFile file)
+    {
+        long maxFileSize = 1024 * 1024 * 15; // Tamanho máximo de 15 MB
+        var format = "image/jpeg";
+        var resizedImageFile = await file.RequestImageFileAsync(format, 200, 200); //Tamanho da imagem
+
+        using var stream = resizedImageFile.OpenReadStream(maxFileSize);
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+
+        var imageUpload = Convert.ToBase64String(memoryStream.ToArray());
+        
+        fileImage = $"data:{format};base64,{imageUpload}";
+        fotoPerfil = imageUpload;
+    }
+
     private async Task Cadastrar()
     {
         var request = new ArtistaGetRequest(nomeArtista!, biografiaArtista!, 
-            "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png");
+            fotoPerfil);
         await artistaAPI.CadastrarArtistaAsync(request);
         NavigationManager.NavigateTo("/Artistas");
     }

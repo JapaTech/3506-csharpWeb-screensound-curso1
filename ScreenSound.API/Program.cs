@@ -41,6 +41,7 @@ var app = builder.Build();
 app.AddEndPointsArtistas();
 app.AddEndPointsMusica();
 app.AddEndPoitsGeneros();
+app.UseStaticFiles();
 
 app.UseSwagger();
 app.UseSwaggerUI();
