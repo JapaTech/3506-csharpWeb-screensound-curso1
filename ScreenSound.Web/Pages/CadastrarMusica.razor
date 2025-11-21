@@ -2,7 +2,7 @@
 @inject ArtistaAPI artistaAPI
 @inject GeneroAPI generoAPI
 @inject MusicaAPI musicaAPI
-
+@inject NavigationManager NavigationManager
 
 <MudPaper Class="px-8 pt-2 pb-4 mx-12 my-8" Justify="Justify.Center">
 
@@ -200,6 +200,7 @@
             );
 
             await musicaAPI.CadastrarMusicaAsync(musicaRequest);
+            NavigationManager.NavigateTo("//MusicasPorArtista");
         }
     }
 }

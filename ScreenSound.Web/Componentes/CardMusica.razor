@@ -5,15 +5,17 @@
         </CardHeaderContent>
     </MudCardHeader>
     <MudCardContent>
-        <MudText Typo="Typo.body2">Duração: @Musica!.anoLancamento</MudText>
+        <MudText Typo="Typo.body2">Ano de Lançamento: @Musica!.anoLancamento</MudText>
         <MudText Typo="Typo.body2">Artista: @Musica!.artistaNome</MudText>
-        @* <MudList>
-            @foreach (var item in Musica!.Genero)
-            {
-                item.Nome;
-            }
-        </MudList> *@
     </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Outlined"
+                   Href=@($"/EditarArtista/{Musica!.nome}")
+                   Color="Color.Warning"
+                   Class="ml-auto">
+            Detalhes
+        </MudButton>
+    </MudCardActions>
 </MudCard>
 
 @code {
