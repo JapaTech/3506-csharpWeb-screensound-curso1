@@ -1,6 +1,205 @@
-﻿@page "/Musica/Cadastrar"
-<h3>CadastrarMusica</h3>
+﻿@page "/CadastrarMusica"
+@inject ArtistaAPI artistaAPI
+@inject GeneroAPI generoAPI
+@inject MusicaAPI musicaAPI
+
+
+<MudPaper Class="px-8 pt-2 pb-4 mx-12 my-8" Justify="Justify.Center">
+
+    <MudText Class="mt-8" Typo="Typo.h4">Cadastro de Música</MudText>
+
+    <MudForm>
+
+        <MudTextField Class="mt-4" T="string" Placeholder="Nome da música/canção"
+                      @bind-Value="nome"
+                      Variant="Variant.Outlined"
+                      Required="true"
+                      RequiredError="Campo obrigatório." />
+        
+        <MudAutocomplete T="ArtistaResponse"
+                 @bind-Value="artistaSelecionado"
+                 Label="Buscar Artista"
+                 Variant="Variant.Filled"
+                 ToStringFunc="GetArtistaDisplayText"
+                 SearchFunc="SearchArtistas"
+                 CoerceText="true"
+                 CoerceValue="true"
+                 DebounceInterval="300"
+                 ResetValueOnEmptyText="true"
+                 AnchorOrigin="Origin.BottomCenter">
+        </MudAutocomplete>
+
+        <MudTextField Class="mt-4" T="int" Placeholder="Ano de lançamento"
+                      @bind-Value="anoLancamento"
+                      Variant="Variant.Outlined"
+                      Lines="1"
+                      Required="true"
+                      RequiredError="Campo obrigatório." />
+        
+        <MudText Typo="Typo.h6" Class="mb-4">Selecione os Gêneros</MudText>
+        <MudGrid>
+            @if (generosSelecionados != null)
+            {
+                @foreach (var genero in generosSelecionados)
+                {
+                    <MudGrid Item="true" xs="12" sm="6" md="4" lg="3">
+                        <MudCheckBox T="bool"
+                                     @bind-Value="@genero.Selecionado"
+                                     Color="Color.Primary"
+                                     Label="@genero.Genero?.nome"
+                                     Class="mt-2" />
+                    </MudGrid>
+                }
+            }
+            else
+            {
+                <MudText>Carregando gêneros...</MudText>
+            }
+        </MudGrid>
+        @if (artistaSelecionado != null)
+        {
+            <MudAlert Severity="Severity.Info" Class="mt-2">
+                <MudText>Debug - Artista Selecionado:</MudText>
+                <MudText>ID: @artistaSelecionado.id</MudText>
+                <MudText>Nome: @artistaSelecionado.nome</MudText>
+            </MudAlert>
+        }
+        
+        @* <MudAutocomplete T="string"
+                         @bind-Value="nomeGenero"
+                         Label="Buscar Genero"
+                         Variant="Variant.Filled"
+                         ToStringFunc="GetGeneroDisplayText"
+                         SearchFunc="SearchGenero"
+                         CoerceText="true"
+                         CoerceValue="true"
+                         DebounceInterval="300"
+                         ResetValueOnEmptyText="true"
+                         AnchorOrigin="Origin.BottomCenter">
+
+        </MudAutocomplete> *@
+
+        @* <MudSelect Class="mt-4" T="string" Label="Gêneros"
+                   Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+            @if (generos is not null)
+            {
+                @foreach (var item in generos)
+                {
+                    <MudSelectItem Value="item.nome"/>
+                }
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Warning">
+                Nenhum gênero disponível.
+                </MudAlert>
+            } 
+        </MudSelect>*@
+
+        <div class="d-flex align-center justify-space-between mt-4">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Class="ml-auto"
+                       OnClick="Cadastrar">
+                Cadastrar
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Info"
+                       Class="ml-3">
+                Voltar
+            </MudButton>
+        </div>
+
+    </MudForm>
+
+</MudPaper>
+
 
 @code {
+    private string? nome;
+    private int anoLancamento;
 
+    private class GeneroSelecionado
+    {
+        public GeneroResponse? Genero { get; set; }
+        public bool Selecionado { get; set; }
+    }
+
+    private ArtistaResponse? artistaSelecionado;
+    private ICollection<ArtistaResponse>? artistas;
+    private ICollection<GeneroResponse>? generos;
+    private ICollection<GeneroSelecionado>? generosSelecionados;
+
+    protected override async Task OnInitializedAsync()
+    {
+        artistas = await artistaAPI.GetArtistaResponsesAsync();
+        generos = await generoAPI.GetGeneroResponsesAsync();
+
+        if (generos != null)
+        {
+            generosSelecionados = generos.Select(g => new GeneroSelecionado { Genero = g, Selecionado = false }).ToList();
+        }
+    }
+
+    private string GetArtistaDisplayText(ArtistaResponse artista)
+    {
+        if (artista == null)
+            return string.Empty;
+
+        return artista.nome ?? string.Empty;
+    }
+
+    private async Task<IEnumerable<ArtistaResponse>> SearchArtistas(string searchText)
+    {
+        if (artistas == null || !artistas.Any())
+            return new List<ArtistaResponse>();
+
+        if (string.IsNullOrWhiteSpace(searchText))
+            return artistas.Take(10); // Retorna os primeiros 10 quando vazio
+
+        // Busca case-insensitive no nome do artista
+        return artistas
+            .Where(a => a.nome?.Contains(searchText, StringComparison.OrdinalIgnoreCase) == true)
+            .Take(10) // Limita a 10 resultados
+            .ToList();
+    }
+
+    public List<string> ObterNomesGenerosSelecionados() =>
+      generosSelecionados?
+          .Where(g => g.Selecionado && g.Genero != null)
+          .Select(g => g.Genero!.nome)
+          .ToList() ?? new List<string>();
+
+    public bool TemGenerosSelecionados() =>
+      generosSelecionados?.Any() ?? false;
+
+    public async Task Cadastrar()
+    {
+        ICollection<GeneroGetRequest> generosRequest = new List<GeneroGetRequest>();
+
+        foreach (var item in generosSelecionados)
+        {
+            generosRequest.Add(new GeneroGetRequest
+            (
+                item.Genero.nome,
+                item.Genero.descricao
+            ));
+        }
+
+        if (artistaSelecionado.id != null)
+        {
+            Console.WriteLine($"artistaSelecionado.nome: {artistaSelecionado.nome}");
+            Console.WriteLine($"artistaSelecionado.id: {artistaSelecionado.id}");
+            Console.WriteLine($"Tipo do id: {artistaSelecionado.id.GetType()}");
+
+            var musicaRequest = new MusicaGetRequest(
+            nome ?? string.Empty,
+            anoLancamento,
+            artistaSelecionado.id,
+            generosRequest
+            );
+
+            await musicaAPI.CadastrarMusicaAsync(musicaRequest);
+        }
+    }
 }

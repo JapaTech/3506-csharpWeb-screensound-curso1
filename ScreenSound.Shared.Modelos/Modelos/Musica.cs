@@ -27,9 +27,18 @@ public class Musica
         Generos = generos;
     }
 
+    public Musica(string nome, int anoLancamento, int artistaId, ICollection<Genero> generos)
+    {
+        Nome = nome;
+        AnoLancamento = anoLancamento;
+        ArtistaId = artistaId;
+        Generos = generos;
+    }
+
     public virtual Artista? Artista { get; set; }
     public string Nome { get; set; }
     public int Id { get; set; }
+    public int? ArtistaId { get; set; }
     public int AnoLancamento { get; set; }
     public virtual ICollection<Genero> Generos { get; set; }
     public void ExibirFichaTecnica()

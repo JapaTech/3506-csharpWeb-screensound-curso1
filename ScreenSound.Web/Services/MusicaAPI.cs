@@ -1,4 +1,8 @@
-﻿namespace ScreenSound.Web.Services
+﻿using ScreenSound.Web.Requests;
+using ScreenSound.Web.Response;
+using System.Net.Http.Json;
+
+namespace ScreenSound.Web.Services
 {
     public class MusicaAPI
     {
@@ -6,6 +10,11 @@
         public MusicaAPI(IHttpClientFactory factory)
         {
             _httpClient = factory.CreateClient("API");
+        }
+
+        public async Task CadastrarMusicaAsync(MusicaGetRequest musica)
+        {
+            await _httpClient.PostAsJsonAsync("Musicas", musica);
         }
     }
 }

@@ -33,8 +33,8 @@ namespace ScreenSound.API.Endpoints
                 var musica = new Musica(
                     musicaReq.nome, 
                     musicaReq.anoLancamento,
-                    GeneroRequestParaEntidade(musicaReq.Generos, dalGenero) ?? new List<Genero>()
-                    );
+                    musicaReq.artistaId,
+                    GeneroRequestParaEntidade(musicaReq.Generos, dalGenero) ?? new List<Genero>());
                 dal.Adicionar(musica);
                 return Results.Created($"/Musicas/{musica.Id}", musica);
             });
