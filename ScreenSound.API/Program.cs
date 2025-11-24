@@ -24,20 +24,28 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(option =>
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("https://localhost:7114")
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
-                      });
-});
+
+    //options.AddPolicy(name: MyAllowSpecificOrigins,
+    //                  policy =>
+    //                  {
+    //                      policy.WithOrigins("https://localhost:7114")
+    //                      .AllowAnyMethod()
+    //                      .AllowAnyHeader();
+    //                  });
+    options.AddPolicy(
+        "wasm",
+        policy => policy.WithOrigins(
+            builder.Configuration["BackendUrl"] ?? "https://localhost:7200",
+           builder.Configuration["FrontendUrl"] ?? "https://localhost:7114")
+        .AllowAnyMethod()
+        .SetIsOriginAllowed(pol => true)
+        .AllowAnyHeader()
+        .AllowCredentials()));
 
 
 var app = builder.Build();
 
-
+app.UseCors("wasm");
 app.AddEndPointsArtistas();
 app.AddEndPointsMusica();
 app.AddEndPoitsGeneros();
